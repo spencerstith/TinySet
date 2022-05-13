@@ -12,14 +12,34 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 
+@SuppressWarnings("unused")
 public class TinySet implements Iterable<TinySet> {
 
-    private static Connection connection;
     private static final List<TinySet> commitCollection = new ArrayList<>();
-
+    private static Connection connection;
     private Incrementer in, out;
     private PreparedStatement statement;
     private ResultSet rs;
+
+    public TinySet(String query) {
+        try {
+            statement = connection.prepareStatement(query);
+            in = new Incrementer();
+            out = new Incrementer();
+        } catch (SQLException e) {
+            System.out.println("TinySet could not prepare the statement!");
+            e.printStackTrace();
+        }
+    }
+
+    public static void connect(String url, String user, String pass) {
+        try {
+            connection = DriverManager.getConnection(url, user, pass);
+        } catch (SQLException e) {
+            System.err.println("Could not connect to database...");
+            e.printStackTrace();
+        }
+    }
 
     public static void connectByFile(String file) {
         try {
@@ -43,15 +63,6 @@ public class TinySet implements Iterable<TinySet> {
         }
     }
 
-    public static void connect(String url, String user, String pass) {
-        try {
-            connection = DriverManager.getConnection(url, user, pass);
-        } catch (SQLException e) {
-            System.err.println("Could not connect to database...");
-            e.printStackTrace();
-        }
-    }
-
     public static void setAutoCommit(boolean autoCommit) {
         try {
             connection.setAutoCommit(autoCommit);
@@ -61,103 +72,8 @@ public class TinySet implements Iterable<TinySet> {
         }
     }
 
-    public TinySet(String query) {
-        try {
-            statement = connection.prepareStatement(query);
-            in = new Incrementer();
-            out = new Incrementer();
-        } catch (SQLException e) {
-            System.out.println("TinySet could not prepare the statement!");
-            e.printStackTrace();
-        }
-    }
-
-    public void skip() {
-        out.get();
-    }
-
-    public String string() {
-        try {
-            if (rs == null) {
-                query();
-            }
-            return rs.getString(out.get());
-        } catch (SQLException e) {
-            throw JDBCRefusal.refusal("String");
-        }
-    }
-
-    private void query() {
-        try {
-            rs = statement.executeQuery();
-            rs.next();
-        } catch (SQLException e) {
-            System.out.println("Something went wrong when executing query!");
-            e.printStackTrace();
-        }
-    }
-
-    public TinySet bigDec(BigDecimal decimal) {
-        try {
-            statement.setBigDecimal(in.get(), decimal);
-            return this;
-        } catch (SQLException e) {
-            throw JDBCRefusal.dislike("BigDecimal");
-        }
-    }
-
-    public BigDecimal bigDec() {
-        try {
-            if (rs == null) {
-                query();
-            }
-            return rs.getBigDecimal(out.get());
-        } catch (SQLException e) {
-            throw JDBCRefusal.refusal("BigDecimal");
-        }
-    }
-
-    public TinySet bool(boolean b) {
-        try {
-            statement.setBoolean(in.get(), b);
-            return this;
-        } catch (SQLException e) {
-            throw JDBCRefusal.dislike("boolean");
-        }
-    }
-
-    public boolean bool() {
-        try {
-            if (rs == null) {
-                query();
-            }
-            return rs.getBoolean(out.get());
-        } catch (SQLException e) {
-            System.out.println("JDBC refuses to give you the boolean!");
-            throw JDBCRefusal.refusal("boolean");
-        }
-    }
-
-    public TinySet date(LocalDate date) {
-        try {
-            statement.setDate(in.get(), Date.valueOf(date));
-            return this;
-        } catch (SQLException e) {
-            throw JDBCRefusal.dislike("Date");
-        }
-    }
-
-    public LocalDate date() {
-        try {
-            if (rs == null) {
-                query();
-            }
-            Date date = rs.getDate(out.get());
-            if (date == null) return null;
-            else return date.toLocalDate();
-        } catch (SQLException e) {
-            throw JDBCRefusal.refusal("Date");
-        }
+    public static void collect(TinySet set) {
+        commitCollection.add(set);
     }
 
     public static void commit(TinySet... sets) {
@@ -188,16 +104,83 @@ public class TinySet implements Iterable<TinySet> {
         commitCollection.clear();
     }
 
-    public static void collect(TinySet set) {
-        commitCollection.add(set);
+    public boolean next() {
+        try {
+            out = new Incrementer();
+            if (rs == null) {
+                rs = statement.executeQuery();
+            }
+            return rs.next();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw JDBCRefusal.refusal("ResultSet's next value");
+        }
     }
 
-    public TinySet integer(int i) {
+    public void skip() {
+        out.get();
+    }
+
+    public BigDecimal bigDec() {
         try {
-            statement.setInt(in.get(), i);
+            if (rs == null) {
+                query();
+            }
+            return rs.getBigDecimal(out.get());
+        } catch (SQLException e) {
+            throw JDBCRefusal.refusal("BigDecimal");
+        }
+    }
+
+    public TinySet bigDec(BigDecimal decimal) {
+        try {
+            statement.setBigDecimal(in.get(), decimal);
             return this;
         } catch (SQLException e) {
-            throw JDBCRefusal.dislike("Integer");
+            throw JDBCRefusal.dislike("BigDecimal");
+        }
+    }
+
+    public boolean bool() {
+        try {
+            if (rs == null) {
+                query();
+            }
+            return rs.getBoolean(out.get());
+        } catch (SQLException e) {
+            System.out.println("JDBC refuses to give you the boolean!");
+            throw JDBCRefusal.refusal("boolean");
+        }
+    }
+
+    public TinySet bool(boolean b) {
+        try {
+            statement.setBoolean(in.get(), b);
+            return this;
+        } catch (SQLException e) {
+            throw JDBCRefusal.dislike("boolean");
+        }
+    }
+
+    public LocalDate date() {
+        try {
+            if (rs == null) {
+                query();
+            }
+            Date date = rs.getDate(out.get());
+            if (date == null) return null;
+            else return date.toLocalDate();
+        } catch (SQLException e) {
+            throw JDBCRefusal.refusal("Date");
+        }
+    }
+
+    public TinySet date(LocalDate date) {
+        try {
+            statement.setDate(in.get(), Date.valueOf(date));
+            return this;
+        } catch (SQLException e) {
+            throw JDBCRefusal.dislike("Date");
         }
     }
 
@@ -212,12 +195,42 @@ public class TinySet implements Iterable<TinySet> {
         }
     }
 
+    public TinySet integer(int i) {
+        try {
+            statement.setInt(in.get(), i);
+            return this;
+        } catch (SQLException e) {
+            throw JDBCRefusal.dislike("Integer");
+        }
+    }
+
+    public String string() {
+        try {
+            if (rs == null) {
+                query();
+            }
+            return rs.getString(out.get());
+        } catch (SQLException e) {
+            throw JDBCRefusal.refusal("String");
+        }
+    }
+
     public TinySet string(String string) {
         try {
             statement.setString(in.get(), string);
             return this;
         } catch (SQLException e) {
             throw JDBCRefusal.dislike("String");
+        }
+    }
+
+    private void query() {
+        try {
+            rs = statement.executeQuery();
+            rs.next();
+        } catch (SQLException e) {
+            System.out.println("Something went wrong when executing query!");
+            e.printStackTrace();
         }
     }
 
@@ -241,22 +254,8 @@ public class TinySet implements Iterable<TinySet> {
         };
     }
 
-    public boolean next() {
-        try {
-            out = new Incrementer();
-            if (rs == null) {
-                rs = statement.executeQuery();
-            }
-            return rs.next();
-        } catch (SQLException e) {
-            e.printStackTrace();
-            throw JDBCRefusal.refusal("ResultSet's next value");
-        }
-    }
-
     public String toString() {
         return statement.toString();
     }
-
 
 }
