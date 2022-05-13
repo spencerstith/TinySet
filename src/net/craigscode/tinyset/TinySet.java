@@ -21,6 +21,11 @@ public class TinySet implements Iterable<TinySet> {
     private PreparedStatement statement;
     private ResultSet rs;
 
+    /**
+     * Creates a new TinySet object.
+     *
+     * @param query Query that TinySet will contain
+     */
     public TinySet(String query) {
         try {
             statement = connection.prepareStatement(query);
@@ -32,15 +37,30 @@ public class TinySet implements Iterable<TinySet> {
         }
     }
 
-    public static void connect(String url, String user, String pass) {
+    /**
+     * Establishes a static database connection for all TinySet objects to use.
+     *
+     * @param url      Database url
+     * @param user     Database user
+     * @param password Database password
+     */
+    public static void connect(String url, String user, String password) {
         try {
-            connection = DriverManager.getConnection(url, user, pass);
+            connection = DriverManager.getConnection(url, user, password);
         } catch (SQLException e) {
             System.err.println("Could not connect to database...");
             e.printStackTrace();
         }
     }
 
+    /**
+     * Establishes a static database connection for all TinySet objects to use.
+     * This method allows TinySet to get database credentials from a Properties file.
+     * <p>
+     * Properties file must contain the fields <i>url</i>, <i>user</i>, <i>password</i>
+     *
+     * @param file path to Properties file
+     */
     public static void connectByFile(String file) {
         try {
             InputStream stream = Files.newInputStream(Paths.get(file));
@@ -52,6 +72,15 @@ public class TinySet implements Iterable<TinySet> {
         }
     }
 
+    /**
+     * Establishes a static database connection for all TinySet objects to use.
+     * This method allows TinySet to get database credentials from a Properties file
+     * that is contained in the Class' resources path.
+     * <p>
+     * Properties file must contain the fields <i>url</i>, <i>user</i>, <i>password</i>
+     *
+     * @param resource path to Properties file within Class' resources path
+     */
     public static void connectByResource(String resource) {
         try {
             InputStream stream = TinySet.class.getResourceAsStream("/" + resource);
@@ -63,6 +92,14 @@ public class TinySet implements Iterable<TinySet> {
         }
     }
 
+    /**
+     * Sets the autoCommit property.
+     * <br>
+     * When autoCommit is true (default), {@link #commit()} must be called to execute the statement.
+     * When autoCommit is false, no query is executed until either {@link #commit(TinySet...)} or {@link  #commitCollection()} is called.
+     *
+     * @param autoCommit whether TinySet should autoCommit
+     */
     public static void setAutoCommit(boolean autoCommit) {
         try {
             connection.setAutoCommit(autoCommit);
@@ -72,10 +109,23 @@ public class TinySet implements Iterable<TinySet> {
         }
     }
 
+    /**
+     * Adds a single TinySet object to the collection of TinySets to be committed on the next call to {@link #commitCollection()}.
+     * This should only be used when autoCommit is false.
+     *
+     * @param set TinySet to be added to the collection of transactions to be committed.
+     */
     public static void collect(TinySet set) {
         commitCollection.add(set);
     }
 
+    /**
+     * Commits all TinySet objects in the list of TinySet objects in {@param sets}.
+     * If an SQLException is thrown while committing, all transactions are automatically rolled back.
+     * This should only be used when autoCommit is false.
+     *
+     * @param sets List of TinySet objects to be committed.
+     */
     public static void commit(TinySet... sets) {
         try {
             for (TinySet set : sets) {
@@ -95,6 +145,12 @@ public class TinySet implements Iterable<TinySet> {
         }
     }
 
+    /**
+     * Commits all TinySet objects in the TinySet collection.
+     * If an SQLException is thrown while committing, all transactions are automatically rolled back.
+     * This method clears the collection after committing.
+     * This should only be used when autoCommit is false.
+     */
     public static void commitCollection() {
         TinySet[] sets = new TinySet[commitCollection.size()];
         for (int i = 0; i < commitCollection.size(); i++) {
@@ -104,6 +160,24 @@ public class TinySet implements Iterable<TinySet> {
         commitCollection.clear();
     }
 
+    /**
+     * Commits the statement contained in the TinySet.
+     */
+    public void commit() {
+        try {
+            statement.execute();
+            connection.commit();
+        } catch (SQLException e) {
+            System.out.println("Could not execute command!");
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Checks whether the set has more information to offer.
+     *
+     * @return Whether the set has more rows from the query
+     */
     public boolean next() {
         try {
             out = new Incrementer();
@@ -117,10 +191,18 @@ public class TinySet implements Iterable<TinySet> {
         }
     }
 
+    /**
+     * Skips over the next column in the row.
+     */
     public void skip() {
         out.get();
     }
 
+    /**
+     * Retrieves the next {@link BigDecimal} in the current row.
+     *
+     * @return The next {@link BigDecimal} in the current row
+     */
     public BigDecimal bigDec() {
         try {
             if (rs == null) {
@@ -132,6 +214,12 @@ public class TinySet implements Iterable<TinySet> {
         }
     }
 
+    /**
+     * Sets the next {@link BigDecimal} in the parameterized query.
+     *
+     * @param decimal Next {@link BigDecimal} for the parameterized query
+     * @return The current TinySet
+     */
     public TinySet bigDec(BigDecimal decimal) {
         try {
             statement.setBigDecimal(in.get(), decimal);
@@ -141,6 +229,11 @@ public class TinySet implements Iterable<TinySet> {
         }
     }
 
+    /**
+     * Retrieves the next boolean in the current row.
+     *
+     * @return The next boolean in the current row
+     */
     public boolean bool() {
         try {
             if (rs == null) {
@@ -153,6 +246,12 @@ public class TinySet implements Iterable<TinySet> {
         }
     }
 
+    /**
+     * Sets the next boolean in the parameterized query.
+     *
+     * @param b Next boolean for the parameterized query
+     * @return The current TinySet
+     */
     public TinySet bool(boolean b) {
         try {
             statement.setBoolean(in.get(), b);
@@ -162,6 +261,11 @@ public class TinySet implements Iterable<TinySet> {
         }
     }
 
+    /**
+     * Retrieves the next {@link LocalDate} in the current row.
+     *
+     * @return The next {@link LocalDate} in the current row
+     */
     public LocalDate date() {
         try {
             if (rs == null) {
@@ -175,6 +279,12 @@ public class TinySet implements Iterable<TinySet> {
         }
     }
 
+    /**
+     * Sets the next {@link LocalDate} in the parameterized query.
+     *
+     * @param date Next {@link LocalDate} for the parameterized query
+     * @return The current TinySet
+     */
     public TinySet date(LocalDate date) {
         try {
             statement.setDate(in.get(), Date.valueOf(date));
@@ -184,6 +294,11 @@ public class TinySet implements Iterable<TinySet> {
         }
     }
 
+    /**
+     * Retrieves the next int in the current row.
+     *
+     * @return The next int in the current row
+     */
     public int integer() {
         try {
             if (rs == null) {
@@ -195,6 +310,12 @@ public class TinySet implements Iterable<TinySet> {
         }
     }
 
+    /**
+     * Sets the next int in the parameterized query.
+     *
+     * @param i Next int for the parameterized query
+     * @return The current TinySet
+     */
     public TinySet integer(int i) {
         try {
             statement.setInt(in.get(), i);
@@ -204,6 +325,11 @@ public class TinySet implements Iterable<TinySet> {
         }
     }
 
+    /**
+     * Retrieves the next {@link String} in the current row.
+     *
+     * @return The next {@link String} in the current row
+     */
     public String string() {
         try {
             if (rs == null) {
@@ -215,6 +341,12 @@ public class TinySet implements Iterable<TinySet> {
         }
     }
 
+    /**
+     * Sets the next {@link String} in the parameterized query.
+     *
+     * @param string Next {@link String} for the parameterized query
+     * @return The current TinySet
+     */
     public TinySet string(String string) {
         try {
             statement.setString(in.get(), string);
@@ -224,6 +356,9 @@ public class TinySet implements Iterable<TinySet> {
         }
     }
 
+    /**
+     * Executes the query that is prepared in {@link TinySet#statement} and sets the pointer to the first row in the ResultSet.
+     */
     private void query() {
         try {
             rs = statement.executeQuery();

@@ -153,9 +153,9 @@ First create a connection from either a `Properties` file or just by manually pa
 // Properties file from Class's resource folder:
 TinySet.connectByResources("some-resource.properties");
 // Properties file form normal path:
-        TinySet.connectByFile("some-file.properties");
+TinySet.connectByFile("some-file.properties");
 // Credential passing:
-        TinySet.connect("url","user","password");
+TinySet.connect("url","user","password");
 ```
 
 The properties file should contain the fields `url`, `user`, `password`.
@@ -165,28 +165,34 @@ The properties file should contain the fields `url`, `user`, `password`.
 Statements are easy to create and retrieve data from.
 
 ```java
-TinySet tinySet=new TinySet("SQL QUERY");
-        while(tinySet.next()){
-        int data=tinySet.integer();
-        //...
-        }
+TinySet tinySet = new TinySet("SQL QUERY");
+while(tinySet.next()){
+    int data = tinySet.integer();
+    //...
+}
 ```
 
 If you need to pass data into the query, that is also simple, using prepared statement syntax (`?`):
 
 ```java
-TinySet tinySet=new TinySet("SQL QUERY WHERE `column` = ?").string("parameter");
-        while(tinySet.next()){
-        int data=tinySet.integer();
-        //...
-        }
+TinySet tinySet = new TinySet("SQL QUERY WHERE `column` = ?").string("parameter");
+while(tinySet.next()){
+    int data = tinySet.integer();
+    //...
+}
 ```
 
-It you only need to get a single field from a query, you can easily one line it:
+If you only need to get a single field from a query, you can easily one line it:
 
 ```java
-int quantity=new TinySet("SELECT `quantity` FROM products WHERE `name` = ?").string(name).integer();
+int quantity = new TinySet("SELECT `quantity` FROM products WHERE `name` = ?").string(name).integer();
 ```
+
+If you are doing an `UPDATE` or `INSERT` command and `autoCommit` is `true` (default), you will need to call `commit()` at the end of a statement
+```java
+new TinySet("UPDATE products SET `cost` = ? WHERE `id` = ?").bigDec(amount).integer(id).commit();
+```
+
 
 ### Dates
 
@@ -215,17 +221,17 @@ these return an error, all transactions will then be rolled back automatically.
 
 ```java
 TinySet.setAutoCommit(false);
-        TinySet set1=new TinySet("...");
-        TinySet.collect(set1);
+TinySet set1 = new TinySet("...");
+TinySet.collect(set1);
 //...
-        TinySet set2=new TinySet("...");
-        TinySet.collect(set2);
+TinySet set2 = new TinySet("...");
+TinySet.collect(set2);
 //...
 // One line:
-        TinySet.collect(new TinySet("...").integer(42));
+TinySet.collect(new TinySet("...").integer(42));
 
 // Commit:
-        TinySet.commitCollection();
+TinySet.commitCollection();
 ```
 
 ### Iterable & Array Capabilities
@@ -233,27 +239,27 @@ TinySet.setAutoCommit(false);
 TinySet implements `Iterable`, so you can do all sorts of fun stuff with it. Instead of this:
 
 ```java
-TinySet tinySet=new TinySet("SELECT * FROM products");
-        while(tinySet.next()){
-        int id=tinySet.integer();
-        String name=tinySet.string();
-        BigDecimal cost=tinySet.bigDec();
-        int quantity=tinySet.integer();
-        System.out.printf("ID: %d, Name: %s, Cost: %f, Quantity: %d",id,name,cost,quantity);
-        }
+TinySet tinySet = new TinySet("SELECT * FROM products");
+while(tinySet.next()){
+    int id = tinySet.integer();
+    String name = tinySet.string();
+    BigDecimal cost = tinySet.bigDec();
+    int quantity = tinySet.integer();
+    System.out.printf("ID: %d, Name: %s, Cost: %f, Quantity: %d", id, name, cost, quantity);
+}
 ```
 
 You can do this:
 
 ```java
-new TinySet("SELECT * FROM products").forEach(t->
-        System.out.printf("ID: %d, Name: %s, Cost: %f, Quantity: %d",
-        t.integer(),t.string(),t.bigDec(),t.integer()));
+new TinySet("SELECT * FROM products").forEach(t ->
+    System.out.printf("ID: %d, Name: %s, Cost: %f, Quantity: %d",
+        t.integer(), t.string(), t.bigDec(), t.integer()));
 ```
 
 Of if you're just selecting a single item and want an array from that item:
 
 ```java
-ArrayList<String> names=new ArrayList<String>;
-new TinySet("SELECT `names` FROM products").forEach(t->names.add(t.string()));
+ArrayList<String> names = new ArrayList<String>;
+new TinySet("SELECT `names` FROM products").forEach(t -> names.add(t.string()));
 ```
