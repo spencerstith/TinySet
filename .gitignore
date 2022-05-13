@@ -1,4 +1,6 @@
 .idea
 lib
-res/db.properties
+db.properties
 out
+.m2
+target

@@ -12,6 +12,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 
+/**
+ * TinySet is a wrapper of the JDBC. TinySet aims to simplify simple SQL operations in Java.
+ * With only the JDBC, Exceptions must constantly be handled and retrieving data/setting up prepared statements is time-consuming.
+ * Using the tools provided with TinySet, basic SQL operations become quick and painless.
+ */
 @SuppressWarnings("unused")
 public class TinySet implements Iterable<TinySet> {
 

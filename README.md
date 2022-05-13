@@ -65,7 +65,7 @@ class Example {
 With TinySet:
 
 ```java
-import net.craigscode.tinyset.TinySet;
+import main.java.net.craigscode.tinyset.TinySet;
 
 import java.math.BigDecimal;
 
@@ -89,7 +89,7 @@ class Example {
 TinySet is secure and allows for usage of prepared statements:
 
 ```java
-import net.craigscode.tinyset.TinySet;
+import main.java.net.craigscode.tinyset.TinySet;
 
 class Example {
     static void printProduct(int id) {
@@ -108,7 +108,7 @@ TinySet allows for settings `autoCommit` to false and will collect your queries 
 when an error occurs**.
 
 ```java
-import net.craigscode.tinyset.TinySet;
+import main.java.net.craigscode.tinyset.TinySet;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
