@@ -3,6 +3,8 @@ package net.craigscode.tinyset;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.sql.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -19,9 +21,20 @@ public class TinySet implements Iterable<TinySet> {
     private PreparedStatement statement;
     private ResultSet rs;
 
-    public static void connect(String resource) {
+    public static void connectByFile(String file) {
         try {
-            InputStream stream = TinySet.class.getResourceAsStream(resource);
+            InputStream stream = Files.newInputStream(Paths.get(file));
+            Properties properties = new Properties();
+            properties.load(stream);
+            connect(properties.getProperty("url"), properties.getProperty("user"), properties.getProperty("password"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void connectByResource(String resource) {
+        try {
+            InputStream stream = TinySet.class.getResourceAsStream("/" + resource);
             Properties properties = new Properties();
             properties.load(stream);
             connect(properties.getProperty("url"), properties.getProperty("user"), properties.getProperty("password"));
@@ -120,7 +133,6 @@ public class TinySet implements Iterable<TinySet> {
             }
             return rs.getBoolean(out.get());
         } catch (SQLException e) {
-            //Output.printlnRandom("JDBC refuses to give you the boolean!");
             System.out.println("JDBC refuses to give you the boolean!");
             throw JDBCRefusal.refusal("boolean");
         }
