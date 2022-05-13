@@ -153,9 +153,9 @@ First create a connection from either a `Properties` file or just by manually pa
 // Properties file from Class's resource folder:
 TinySet.connectByResources("some-resource.properties");
 // Properties file form normal path:
-        TinySet.connectByFile("some-file.properties")
+        TinySet.connectByFile("some-file.properties");
 // Credential passing:
-        TinySet.connect("url","user","password")
+        TinySet.connect("url","user","password");
 ```
 
 The properties file should contain the fields `url`, `user`, `password`.
@@ -220,6 +220,7 @@ TinySet.setAutoCommit(false);
 //...
         TinySet set2=new TinySet("...");
         TinySet.collect(set2);
+//...
 // One line:
         TinySet.collect(new TinySet("...").integer(42));
 
