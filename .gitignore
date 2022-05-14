@@ -1,6 +1,7 @@
+.DS_Store
 .idea
-lib
-db.properties
-out
 .m2
+lib
+out
 target
+db.properties
