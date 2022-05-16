@@ -4,7 +4,7 @@
 
     <groupId>net.craigscode</groupId>
     <artifactId>tinyset</artifactId>
-    <version>0.2.5</version>
+    <version>0.2.6-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>Tiny Set</name>
@@ -30,7 +30,7 @@
         <connection>scm:git:git://github.com/spencerstith/TinySet.git</connection>
         <developerConnection>scm:git:git@github.com:spencerstith/TinySet.git</developerConnection>
         <url>http://github.com/spencerstith/TinySet</url>
-        <tag>tinyset-0.2.5</tag>
+        <tag>HEAD</tag>
     </scm>
 
     <build>
