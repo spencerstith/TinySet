@@ -13,6 +13,11 @@ When using the JDBC normally, there is a lot you have to do to get or put inform
 
 TinySet takes care of all the column counting and error handling when doing database operations for your project.
 
+Error handling is an important part of any project, but for quick queries, it can be frustrating to have try/catch blocks all over the place.
+TinySet handles these and will still print meaningful messages when something does go wrong.
+SQL errors also don't always have meaning and looking up error codes is annoying.
+TinySet looks them up for you and tells you what they are.
+
 For example: You have a database with table `products` and columns `id`, `name`, `cost`, `quantity`.
 
 With just JDBC, there is so much you have to do to get information:
@@ -74,12 +79,12 @@ class Example {
         // Load database settings
         TinySet.connectByResource("db.properties");
         // Get information from database
-        TinySet tinySet = new TinySet("SELECT * FROM products");
-        while (tinySet.next()) {
-            int id = tinySet.integer();
-            String name = tinySet.string();
-            BigDecimal cost = tinySet.bigDec();
-            int quantity = tinySet.integer();
+        TinySet set = new TinySet("SELECT * FROM products");
+        while (set.next()) {
+            int id = set.getInt();
+            String name = set.getString();
+            BigDecimal cost = set.getBigDec();
+            int quantity = set.getInt();
             System.out.printf("ID: %d, Name: %s, Cost: %f, Quantity: %d", id, name, cost, quantity);
         }
     }
@@ -95,10 +100,10 @@ class Example {
     static void printProduct(int id) {
         TinySet tinySet = new TinySet("SELECT * FROM products WHERE `id` = ?").integer(id);
 
-        int id = tinySet.integer();
-        String name = tinySet.string();
-        BigDecimal cost = tinySet.bigDec();
-        int quantity = tinySet.integer();
+        int id = tinySet.getInt();
+        String name = tinySet.getString();
+        BigDecimal cost = tinySet.getBigDec();
+        int quantity = tinySet.getInt();
         System.out.printf("ID: %d, Name: %s, Cost: %f, Quantity: %d", id, name, cost, quantity);
     }
 }
@@ -114,16 +119,16 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 
 class Example {
-    static void pushProduct(int id, String name, BigDecimal cost, int quantity, LocalDate release) {
+    static void addProduct(int id, String name, BigDecimal cost, int quantity, LocalDate release) {
         TinySet.setAutoCommit(false);
 
         TinySet product = new TinySet("INSERT INTO products(`id`, `name`, `cost`, `quantity`) VALUES (?, ?, ?, ?");
         // You can chain commands!
-        product.integer(id).string(name).bigDec(cost).integer(quantity);
+        product.setInt(id).setString(name).setBigDec(cost).setInt(quantity);
         TinySet.collect(product);
 
         TinySet release = new TinySet("INSERT INTO release_dates(`id`, `release_date`) VALUES (?, ?)");
-        release.integer(id).date(release);
+        release.setInt(id).setDate(release);
         TinySet.collect(release);
 
         TinySet.commitCollection();
@@ -152,7 +157,7 @@ First create a connection from either a `Properties` file or just by manually pa
 ```java
 // Properties file from Class's resource folder:
 TinySet.connectByResources("some-resource.properties");
-// Properties file form normal path:
+// Properties file form a normal path:
 TinySet.connectByFile("some-file.properties");
 // Credential passing:
 TinySet.connect("url","user","password");
@@ -167,7 +172,7 @@ Statements are easy to create and retrieve data from.
 ```java
 TinySet tinySet = new TinySet("SQL QUERY");
 while(tinySet.next()){
-    int data = tinySet.integer();
+    int data = tinySet.getInt();
     //...
 }
 ```
@@ -177,7 +182,7 @@ If you need to pass data into the query, that is also simple, using prepared sta
 ```java
 TinySet tinySet = new TinySet("SQL QUERY WHERE `column` = ?").string("parameter");
 while(tinySet.next()){
-    int data = tinySet.integer();
+    int data = tinySet.getInt();
     //...
 }
 ```
@@ -185,12 +190,12 @@ while(tinySet.next()){
 If you only need to get a single field from a query, you can easily one line it:
 
 ```java
-int quantity = new TinySet("SELECT `quantity` FROM products WHERE `name` = ?").string(name).integer();
+int quantity = new TinySet("SELECT `quantity` FROM products WHERE `name` = ?").setString(name).getInt();
 ```
 
 If you are doing an `UPDATE` or `INSERT` command and `autoCommit` is `true` (default), you will need to call `commit()` at the end of a statement
 ```java
-new TinySet("UPDATE products SET `cost` = ? WHERE `id` = ?").bigDec(amount).integer(id).commit();
+new TinySet("UPDATE products SET `cost` = ? WHERE `id` = ?").setBigDec(amount).setInt(id).commit();
 ```
 
 
@@ -206,11 +211,11 @@ an `SQLDate`.
 
 You can put and/or retrieve the following types with TinySet:
 
-- `String`: `string()`, `string(String str)`
-- `BigDecimal`: `bigDec()`, `bigDec(BigDecimal decimal)`
-- `boolean`: `bool()`, `bool(boolean bool)`
-- `LocalDate`: `date()`, `date(LocalDate date)`
-- `int`: `integer()`, `integer(int i)`
+- `String`: `getString()`, `setString(String str)`
+- `BigDecimal`: `getBigDec()`, `setBigDec(BigDecimal decimal)`
+- `boolean`: `getBoolean()`, `setBoolean(boolean bool)`
+- `LocalDate`: `getDate()`, `setDate(LocalDate date)`
+- `int`: `getInt()`, `setInt(int i)`
 
 If needed, you can also skip over a selected column in a set with `skip()`
 
@@ -228,7 +233,7 @@ TinySet set2 = new TinySet("...");
 TinySet.collect(set2);
 //...
 // One line:
-TinySet.collect(new TinySet("...").integer(42));
+TinySet.collect(new TinySet("...").setInt(42));
 
 // Commit:
 TinySet.commitCollection();
@@ -241,10 +246,10 @@ TinySet implements `Iterable`, so you can do all sorts of fun stuff with it. Ins
 ```java
 TinySet tinySet = new TinySet("SELECT * FROM products");
 while(tinySet.next()){
-    int id = tinySet.integer();
-    String name = tinySet.string();
-    BigDecimal cost = tinySet.bigDec();
-    int quantity = tinySet.integer();
+    int id = tinySet.getInt();
+    String name = tinySet.getString();
+    BigDecimal cost = tinySet.getBigDec();
+    int quantity = tinySet.getInt();
     System.out.printf("ID: %d, Name: %s, Cost: %f, Quantity: %d", id, name, cost, quantity);
 }
 ```
@@ -254,12 +259,12 @@ You can do this:
 ```java
 new TinySet("SELECT * FROM products").forEach(t ->
     System.out.printf("ID: %d, Name: %s, Cost: %f, Quantity: %d",
-        t.integer(), t.string(), t.bigDec(), t.integer()));
+        t.getInt(), t.getString(), t.getBigDec(), t.getInt()));
 ```
 
 Of if you're just selecting a single item and want an array from that item:
 
 ```java
 ArrayList<String> names = new ArrayList<String>;
-new TinySet("SELECT `names` FROM products").forEach(t -> names.add(t.string()));
+new TinySet("SELECT `names` FROM products").forEach(t -> names.add(t.getString()));
 ```

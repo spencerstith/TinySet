@@ -208,7 +208,7 @@ public class TinySet implements Iterable<TinySet> {
      *
      * @return The next {@link BigDecimal} in the current row
      */
-    public BigDecimal bigDec() {
+    public BigDecimal getBigDec() {
         try {
             if (rs == null) {
                 query();
@@ -225,7 +225,7 @@ public class TinySet implements Iterable<TinySet> {
      * @param decimal Next {@link BigDecimal} for the parameterized query
      * @return The current TinySet
      */
-    public TinySet bigDec(BigDecimal decimal) {
+    public TinySet setBigDec(BigDecimal decimal) {
         try {
             statement.setBigDecimal(in.get(), decimal);
             return this;
@@ -239,14 +239,13 @@ public class TinySet implements Iterable<TinySet> {
      *
      * @return The next boolean in the current row
      */
-    public boolean bool() {
+    public boolean getBoolean() {
         try {
             if (rs == null) {
                 query();
             }
             return rs.getBoolean(out.get());
         } catch (SQLException e) {
-            System.out.println("JDBC refuses to give you the boolean!");
             throw JDBCRefusal.refusal("boolean");
         }
     }
@@ -257,7 +256,7 @@ public class TinySet implements Iterable<TinySet> {
      * @param b Next boolean for the parameterized query
      * @return The current TinySet
      */
-    public TinySet bool(boolean b) {
+    public TinySet setBoolean(boolean b) {
         try {
             statement.setBoolean(in.get(), b);
             return this;
@@ -271,7 +270,7 @@ public class TinySet implements Iterable<TinySet> {
      *
      * @return The next {@link LocalDate} in the current row
      */
-    public LocalDate date() {
+    public LocalDate getDate() {
         try {
             if (rs == null) {
                 query();
@@ -290,7 +289,7 @@ public class TinySet implements Iterable<TinySet> {
      * @param date Next {@link LocalDate} for the parameterized query
      * @return The current TinySet
      */
-    public TinySet date(LocalDate date) {
+    public TinySet setDate(LocalDate date) {
         try {
             statement.setDate(in.get(), Date.valueOf(date));
             return this;
@@ -304,7 +303,7 @@ public class TinySet implements Iterable<TinySet> {
      *
      * @return The next int in the current row
      */
-    public int integer() {
+    public int getInt() {
         try {
             if (rs == null) {
                 query();
@@ -321,7 +320,7 @@ public class TinySet implements Iterable<TinySet> {
      * @param i Next int for the parameterized query
      * @return The current TinySet
      */
-    public TinySet integer(int i) {
+    public TinySet setInt(int i) {
         try {
             statement.setInt(in.get(), i);
             return this;
@@ -335,7 +334,7 @@ public class TinySet implements Iterable<TinySet> {
      *
      * @return The next {@link String} in the current row
      */
-    public String string() {
+    public String getString() {
         try {
             if (rs == null) {
                 query();
@@ -352,7 +351,7 @@ public class TinySet implements Iterable<TinySet> {
      * @param string Next {@link String} for the parameterized query
      * @return The current TinySet
      */
-    public TinySet string(String string) {
+    public TinySet setString(String string) {
         try {
             statement.setString(in.get(), string);
             return this;
