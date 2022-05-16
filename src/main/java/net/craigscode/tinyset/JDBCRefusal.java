@@ -2,16 +2,18 @@ package net.craigscode.tinyset;
 
 class JDBCRefusal extends RuntimeException {
 
+    // TODO better error handling and type checking
+
     JDBCRefusal(String message) {
         super(message);
     }
 
-    public static JDBCRefusal dislike(String c) {
-        return new JDBCRefusal("JDBC didn't like that " + c + "!");
+    public static JDBCRefusal dislike(String s) {
+        return new JDBCRefusal("TinySet cannot accept that " + s + "!");
     }
 
-    public static JDBCRefusal refusal(String c) {
-        return new JDBCRefusal("JDBC refuses to give you that " + c);
+    public static JDBCRefusal refusal(String s) {
+        return new JDBCRefusal("TinySet cannot give you that " + s);
     }
 
 }
