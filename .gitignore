@@ -1,7 +1,7 @@
 .DS_Store
 .idea
-.m2
 lib
 out
 target
 db.properties
+*.iml
