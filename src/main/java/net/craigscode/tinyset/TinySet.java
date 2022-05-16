@@ -266,6 +266,68 @@ public class TinySet implements Iterable<TinySet> {
     }
 
     /**
+     * Retrieves the next byte in the current row.
+     *
+     * @return The next byte in the current row
+     */
+    public byte getByte() {
+        try {
+            if (rs == null) {
+                query();
+            }
+            return rs.getByte(out.get());
+        } catch (SQLException e) {
+            throw JDBCRefusal.refusal("byte");
+        }
+    }
+
+    /**
+     * Sets the next byte in the parameterized query.
+     *
+     * @param b Next byte for the parameterized query
+     * @return The current TinySet
+     */
+    public TinySet setByte(byte b) {
+        try {
+            statement.setByte(in.get(), b);
+            return this;
+        } catch (SQLException e) {
+            throw JDBCRefusal.dislike("byte");
+        }
+    }
+
+    /**
+     * Retrieves the next byte array in the current row.
+     *
+     * @return The next byte array in the current row
+     */
+    public byte[] getBytes() {
+        try {
+            if (rs == null) {
+                query();
+            }
+            return rs.getBytes(out.get());
+        } catch (SQLException e) {
+            throw JDBCRefusal.refusal("byte array");
+        }
+    }
+
+    /**
+     * Sets the next byte array in the parameterized query.
+     *
+     * @param b Next byte array for the parameterized query
+     * @return The current TinySet
+     */
+    public TinySet setBytes(byte[] b) {
+        try {
+            statement.setBytes(in.get(), b);
+            return this;
+        } catch (SQLException e) {
+            throw JDBCRefusal.dislike("byte array");
+        }
+    }
+
+    /**
      * Retrieves the next {@link LocalDate} in the current row.
      *
      * @return The next {@link LocalDate} in the current row
@@ -299,6 +361,68 @@ public class TinySet implements Iterable<TinySet> {
     }
 
     /**
+     * Retrieves the next double in the current row.
+     *
+     * @return The next double in the current row
+     */
+    public double getDouble() {
+        try {
+            if (rs == null) {
+                query();
+            }
+            return rs.getDouble(out.get());
+        } catch (SQLException e) {
+            throw JDBCRefusal.refusal("double");
+        }
+    }
+
+    /**
+     * Sets the next double in the parameterized query.
+     *
+     * @param d Next double for the parameterized query
+     * @return The current TinySet
+     */
+    public TinySet setDouble(double d) {
+        try {
+            statement.setDouble(in.get(), d);
+            return this;
+        } catch (SQLException e) {
+            throw JDBCRefusal.dislike("double");
+        }
+    }
+
+    /**
+     * Retrieves the next float in the current row.
+     *
+     * @return The next float in the current row
+     */
+    public float getFloat() {
+        try {
+            if (rs == null) {
+                query();
+            }
+            return rs.getFloat(out.get());
+        } catch (SQLException e) {
+            throw JDBCRefusal.refusal("float");
+        }
+    }
+
+    /**
+     * Sets the next float in the parameterized query.
+     *
+     * @param f Next float for the parameterized query
+     * @return The current TinySet
+     */
+    public TinySet setFloat(float f) {
+        try {
+            statement.setFloat(in.get(), f);
+            return this;
+        } catch (SQLException e) {
+            throw JDBCRefusal.dislike("float");
+        }
+    }
+
+    /**
      * Retrieves the next int in the current row.
      *
      * @return The next int in the current row
@@ -326,6 +450,68 @@ public class TinySet implements Iterable<TinySet> {
             return this;
         } catch (SQLException e) {
             throw JDBCRefusal.dislike("Integer");
+        }
+    }
+
+    /**
+     * Retrieves the next long in the current row.
+     *
+     * @return The next long in the current row
+     */
+    public long getLong() {
+        try {
+            if (rs == null) {
+                query();
+            }
+            return rs.getLong(out.get());
+        } catch (SQLException e) {
+            throw JDBCRefusal.refusal("long");
+        }
+    }
+
+    /**
+     * Sets the next long in the parameterized query.
+     *
+     * @param l Next long for the parameterized query
+     * @return The current TinySet
+     */
+    public TinySet setLong(long l) {
+        try {
+            statement.setLong(in.get(), l);
+            return this;
+        } catch (SQLException e) {
+            throw JDBCRefusal.dislike("long");
+        }
+    }
+
+    /**
+     * Retrieves the next short in the current row.
+     *
+     * @return The next short in the current row
+     */
+    public short getShort() {
+        try {
+            if (rs == null) {
+                query();
+            }
+            return rs.getShort(out.get());
+        } catch (SQLException e) {
+            throw JDBCRefusal.refusal("short");
+        }
+    }
+
+    /**
+     * Sets the next short in the parameterized query.
+     *
+     * @param s Next short for the parameterized query
+     * @return The current TinySet
+     */
+    public TinySet setShort(short s) {
+        try {
+            statement.setShort(in.get(), s);
+            return this;
+        } catch (SQLException e) {
+            throw JDBCRefusal.dislike("short");
         }
     }
 
