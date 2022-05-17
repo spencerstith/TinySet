@@ -16,6 +16,10 @@ public class Incrementer {
         return i++;
     }
 
+    public int previous() {
+        return i - 1;
+    }
+
     public String toString() {
         return String.valueOf(i);
     }

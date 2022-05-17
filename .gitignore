@@ -5,3 +5,4 @@ out
 target
 db.properties
 *.iml
+src/main/java/net/craigscode/tinyset/Testing.java
