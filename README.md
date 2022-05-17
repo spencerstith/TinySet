@@ -130,14 +130,14 @@ class Example {
 ```
 
 ## Getting Started/How To Use
-TinySet exists on the Maven Central Repository as `net.craigscode:tinyset:1.1-SNAPSHOT`.
+TinySet exists on the Maven Central Repository as `net.craigscode:tinyset:1.0.0`.
 
 Maven dependency:
 ```xml
 <dependency>
     <groupId>net.craigscode</groupId>
     <artifactId>tinyset</artifactId>
-    <version>1.1-SNAPSHOT</version>
+    <version>1.0.0</version>
 </dependency>
 ```
 
