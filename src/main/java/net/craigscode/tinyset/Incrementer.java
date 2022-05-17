@@ -4,7 +4,7 @@ package net.craigscode.tinyset;
  * Incrementer is a helper class for TinySet.
  * The sole purpose of this class is to keep track of column numbers when retrieving information from a query.
  */
-public class Incrementer {
+class Incrementer {
 
     private int i;
 
@@ -14,10 +14,6 @@ public class Incrementer {
 
     public int get() {
         return i++;
-    }
-
-    public int previous() {
-        return i - 1;
     }
 
     public String toString() {

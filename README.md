@@ -9,16 +9,12 @@ TinySet is a wrapper of the Java Data Base Connector that simplifies doing basic
 
 ## Why use TinySet
 
-When using the JDBC normally, there is a lot you have to do to get or put information in a database.
-
 TinySet takes care of all the column counting and error handling when doing database operations for your project.
 
-Error handling is an important part of any project, but for quick queries, it can be frustrating to have try/catch blocks all over the place.
+Error handling is an important part of any project, but for quick queries, it can be frustrating to have `try`/`catch` blocks all over the place that only `printStackTrace()`.
 TinySet handles these and will still print meaningful messages when something does go wrong.
-SQL errors also don't always have meaning and looking up error codes is annoying.
-TinySet looks them up for you and tells you what they are.
 
-For example: You have a database with table `products` and columns `id`, `name`, `cost`, `quantity`.
+As an example using mySQL: You have a database with table `products` and columns `id`, `name`, `cost`, `quantity`.
 
 With just JDBC, there is so much you have to do to get information:
 
@@ -68,7 +64,6 @@ class Example {
 ```
 
 With TinySet:
-
 ```java
 import main.java.net.craigscode.tinyset.TinySet;
 
@@ -92,7 +87,6 @@ class Example {
 ```
 
 TinySet is secure and allows for usage of prepared statements:
-
 ```java
 import main.java.net.craigscode.tinyset.TinySet;
 
@@ -111,7 +105,6 @@ class Example {
 
 TinySet allows for settings `autoCommit` to false and will collect your queries for you and **automatically rollback
 when an error occurs**.
-
 ```java
 import main.java.net.craigscode.tinyset.TinySet;
 
@@ -137,7 +130,6 @@ class Example {
 ```
 
 ## Getting Started/How To Use
-
 TinySet exists on the Maven Central Repository as `net.craigscode:tinyset:1.1-SNAPSHOT`.
 
 Maven dependency:
@@ -153,15 +145,13 @@ This tutorial assumes you already have a driver library for your database in you
 
 - [Create Connection](#create-connection)
 - [Statements](#statements)
-- [Dates](#date)
+- [Dates](#dates)
 - [Object Types](#object-types)
 - [AutoCommit & Rolling Back](#autocommit-and-rolling-back)
 - [Iterable & Array Capabilities](#iterable--array-capabilities)
 
 ### Create Connection
-
 First create a connection from either a `Properties` file or just by manually passing in credentials:
-
 ```java
 // Properties file from Class's resource folder:
 TinySet.connectByResources("some-resource.properties");
@@ -174,9 +164,7 @@ TinySet.connect("url","user","password");
 The properties file should contain the fields `url`, `user`, `password`.
 
 ### Statements
-
 Statements are easy to create and retrieve data from.
-
 ```java
 TinySet tinySet = new TinySet("SQL QUERY");
 while(tinySet.next()){
@@ -186,9 +174,8 @@ while(tinySet.next()){
 ```
 
 If you need to pass data into the query, that is also simple, using prepared statement syntax (`?`):
-
 ```java
-TinySet tinySet = new TinySet("SQL QUERY WHERE `column` = ?").string("parameter");
+TinySet tinySet = new TinySet("SQL QUERY WHERE `column` = ?").setString("parameter");
 while(tinySet.next()){
     int data = tinySet.getInt();
     //...
@@ -196,39 +183,42 @@ while(tinySet.next()){
 ```
 
 If you only need to get a single field from a query, you can easily one line it:
-
 ```java
 int quantity = new TinySet("SELECT `quantity` FROM products WHERE `name` = ?").setString(name).getInt();
 ```
 
-If you are doing an `UPDATE` or `INSERT` command and `autoCommit` is `true` (default), you will need to call `commit()` at the end of a statement
+If you are doing an `UPDATE` or `INSERT` command and `autoCommit` is `true` (default), you will need to call `commit()` at the end of a statement.
 ```java
 new TinySet("UPDATE products SET `cost` = ? WHERE `id` = ?").setBigDec(amount).setInt(id).commit();
 ```
 
-
 ### Dates
-
-By default, JDBC uses `SQLDate` objects. There are old and not recommended for use. Yet, you have to use them when using
+By default, JDBC uses `SQLDate` objects. These are old and not recommended for use. Yet, you have to use them when using
 JDBC. TinySet automatically converts to/from these objects to the modern `LocalDate`, so you never have to use
 an `SQLDate`.
 
 *Note: I plan on adding more date support in the future.*
 
 ### Object Types
-
 You can put and/or retrieve the following types with TinySet:
 
-- `String`: `getString()`, `setString(String str)`
-- `BigDecimal`: `getBigDec()`, `setBigDec(BigDecimal decimal)`
-- `boolean`: `getBoolean()`, `setBoolean(boolean bool)`
-- `LocalDate`: `getDate()`, `setDate(LocalDate date)`
-- `int`: `getInt()`, `setInt(int i)`
+| Type       | Get            | Set                             |
+|------------|----------------|---------------------------------|
+| BigDecimal | `getBigDec()`  | `setBigDec(BigDecimal decimal)` |
+| boolean    | `getBoolean()` | `setBoolean(boolean b)`         |
+| byte       | `getByte()`    | `setByte(byte b)`               |
+| byte[]     | `getBytes()`   | `setBytes(byte[] b)`            |
+| LocalDate  | `getDate()`    | `setDate(LocalDate date)`       |
+| double     | `getDouble()`  | `setDouble(double d)`           |
+| float      | `getFloat()`   | `setFloat(float f)`             |
+| int        | `getInt()`     | `setInt(int i)`                 |
+| long       | `getLong()`    | `setLong(long l)`               |
+| short      | `getShort()`   | `setShort(short s)`             |
+| String     | `getString()`  | `setString(String str)`         |
 
 If needed, you can also skip over a selected column in a set with `skip()`
 
 ### AutoCommit and Rolling Back
-
 You can turn off `autoCommit` and easily collect several TinySet objects, which you can execute all at once. If any of
 these return an error, all transactions will then be rolled back automatically.
 
@@ -248,9 +238,7 @@ TinySet.commitCollection();
 ```
 
 ### Iterable & Array Capabilities
-
 TinySet implements `Iterable`, so you can do all sorts of fun stuff with it. Instead of this:
-
 ```java
 TinySet tinySet = new TinySet("SELECT * FROM products");
 while(tinySet.next()){
@@ -263,15 +251,13 @@ while(tinySet.next()){
 ```
 
 You can do this:
-
 ```java
 new TinySet("SELECT * FROM products").forEach(t ->
     System.out.printf("ID: %d, Name: %s, Cost: %f, Quantity: %d",
         t.getInt(), t.getString(), t.getBigDec(), t.getInt()));
 ```
 
-Of if you're just selecting a single item and want an array from that item:
-
+Or if you're just selecting a single item and want an array from that item:
 ```java
 ArrayList<String> names = new ArrayList<String>;
 new TinySet("SELECT `names` FROM products").forEach(t -> names.add(t.getString()));
