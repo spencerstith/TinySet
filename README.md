@@ -138,8 +138,16 @@ class Example {
 
 ## Getting Started/How To Use
 
-Unfortunately, TinySet currently only exists as a jar file, which you must download and add to your project. Get the jar
-file from the releases or packages page. I'm working on getting it on Grade/Maven.
+TinySet exists on the Maven Central Repository as `net.craigscode:tinyset:1.1-SNAPSHOT`.
+
+Maven dependency:
+```xml
+<dependency>
+    <groupId>net.craigscode</groupId>
+    <artifactId>tinyset</artifactId>
+    <version>1.1-SNAPSHOT</version>
+</dependency>
+```
 
 This tutorial assumes you already have a driver library for your database in your project.
 
