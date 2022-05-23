@@ -11,6 +11,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 /**
  * TinySet is a wrapper of the JDBC. TinySet aims to simplify simple SQL operations in Java.
@@ -522,6 +524,44 @@ public class TinySet implements Iterable<TinySet> {
         } catch (SQLException e) {
             throw new TinyException(e);
         }
+    }
+
+    /**
+     * Retrieves the next {@link Object} in the current row.
+     *
+     * @return The next {@link Object} in the current row
+     */
+    public Object getObject() {
+        try {
+            query();
+            return rs.getObject(out.get());
+        } catch (SQLException e) {
+            throw new TinyException(e);
+        }
+    }
+
+    /**
+     * Sets the next {@link Object} in the parameterized query.
+     *
+     * @param object Next {@link Object} for the parameterized query
+     * @return The current TinySet
+     */
+    public TinySet setObject(Object object) {
+        try {
+            statement.setObject(in.get(), object);
+            return this;
+        } catch (SQLException e) {
+            throw new TinyException(e);
+        }
+    }
+
+    /**
+     * Returns a Stream of a TinySet.
+     *
+     * @return Stream object of the current TinySet
+     */
+    public Stream<TinySet> stream() {
+        return StreamSupport.stream(spliterator(), false);
     }
 
     /**
