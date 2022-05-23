@@ -6,6 +6,7 @@ TinySet is a wrapper of the Java Data Base Connector that simplifies doing basic
 
 - [Why Use TinySet](#why-use-tinyset)
 - [Getting Started/How To Use](#getting-startedhow-to-use)
+- [Advanced Features](#advanced-features)
 
 ## Why use TinySet
 
@@ -148,6 +149,7 @@ This tutorial assumes you already have a driver library for your database in you
 - [Dates](#dates)
 - [Object Types](#object-types)
 - [AutoCommit & Rolling Back](#autocommit-and-rolling-back)
+- [Exception Handling](#exception-handling)
 - [Iterable & Array Capabilities](#iterable--array-capabilities)
 
 ### Create Connection
@@ -162,6 +164,8 @@ TinySet.connect("url","user","password");
 ```
 
 The properties file should contain the fields `url`, `user`, `password`.
+
+If you need access to the connection for any reason, you can use `getConnection()`.
 
 ### Statements
 Statements are easy to create and retrieve data from.
@@ -192,6 +196,8 @@ If you are doing an `UPDATE` or `INSERT` command and `autoCommit` is `true` (def
 new TinySet("UPDATE products SET `cost` = ? WHERE `id` = ?").setBigDec(amount).setInt(id).commit();
 ```
 
+If you need access to the statement for any reason, you can use `getStatement()`.
+
 ### Dates
 By default, JDBC uses `SQLDate` objects. These are old and not recommended for use. Yet, you have to use them when using
 JDBC. TinySet automatically converts to/from these objects to the modern `LocalDate`, so you never have to use
@@ -215,6 +221,7 @@ You can put and/or retrieve the following types with TinySet:
 | long       | `getLong()`    | `setLong(long l)`               |
 | short      | `getShort()`   | `setShort(short s)`             |
 | String     | `getString()`  | `setString(String str)`         |
+| Object     | `getObject()`  | `setObject(Object object)`      |
 
 If needed, you can also skip over a selected column in a set with `skip()`
 
@@ -235,6 +242,22 @@ TinySet.collect(new TinySet("...").setInt(42));
 
 // Commit:
 TinySet.commitCollection();
+```
+
+### Exception Handling
+TinySet helps to reduce the amount of boilerplate code needed for SQL operations, including exception handling.
+TinySet uses a `TinyException` to wrap the `SQLException` by extending `RuntimeException`, so you can still catch the errors, but don't always have to.
+If you still wish to handle exceptions, you can use a `try/catch` block that catches a `TinyException`.
+Further, you can access the underlying `SQLException` contained:
+
+```java
+try {
+    TinySet set = new TinySet("...");
+    int value = set.getInt();
+} catch (TinyException e) {
+    int statusCode = e.sqlException.getStatusCode();
+    System.err.println(e.sqlException.getMessage());
+}
 ```
 
 ### Iterable & Array Capabilities
@@ -262,3 +285,9 @@ Or if you're just selecting a single item and want an array from that item:
 ArrayList<String> names = new ArrayList<String>;
 new TinySet("SELECT `names` FROM products").forEach(t -> names.add(t.getString()));
 ```
+
+TinySet can also be converted to a stream using `stream()` for any streaming needs.
+
+## Advanced Features
+If there is something you need to do that is beyond the scope of TinySet or that TinySet has yet to implement,
+you can access the instance's `Connection`, `PreparedStatement`, or `ResultSet` with the methods `getConnection()`, `getStatement()`, or `getResultSet()` respectively.
