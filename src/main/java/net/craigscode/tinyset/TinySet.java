@@ -182,6 +182,30 @@ public class TinySet implements Iterable<TinySet> {
     }
 
     /**
+     * Gets the current Connection for any manual usage for operations outside the scope of TinySet or something TinySet has yet to implement.
+     * @return TinySet's connection
+     */
+    public Connection getConnection() {
+        return connection;
+    }
+
+    /**
+     * Gets the current PreparedStatement for any manual usage for operations outside the scope of TinySet or something TinySet has yet to implement.
+     * @return This TinySet's instance of the PreparedStatement
+     */
+    public PreparedStatement getStatement() {
+        return statement;
+    }
+
+    /**
+     * Gets the current ResultSet for any manual usage for operations outside the scope of TinySet or something TinySet has yet to implement.
+     * @return This TinySet's instance of the ResultSet
+     */
+    public ResultSet getResultSet() {
+        return rs;
+    }
+
+    /**
      * Checks whether the set has more information to offer.
      *
      * @return Whether the set has more rows from the query
