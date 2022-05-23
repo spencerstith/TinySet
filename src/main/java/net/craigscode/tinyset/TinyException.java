@@ -19,11 +19,11 @@ import java.sql.SQLException;
 @SuppressWarnings("unused")
 class TinyException extends RuntimeException {
 
-    public SQLException exception;
+    public SQLException sqlException;
 
     TinyException(SQLException exception) {
         super(exception.getMessage());
-        this.exception = exception;
+        this.sqlException = exception;
     }
 
     TinyException(String m) {
@@ -32,7 +32,7 @@ class TinyException extends RuntimeException {
 
     TinyException(String m, SQLException exception) {
         super(m);
-        this.exception = exception;
+        this.sqlException = exception;
         System.err.println("[TinySet] Original error message:");
         exception.printStackTrace();
     }
