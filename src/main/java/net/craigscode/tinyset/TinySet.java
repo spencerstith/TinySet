@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -183,6 +184,7 @@ public class TinySet implements Iterable<TinySet> {
 
     /**
      * Gets the current Connection for any manual usage for operations outside the scope of TinySet or something TinySet has yet to implement.
+     *
      * @return TinySet's connection
      */
     public Connection getConnection() {
@@ -191,6 +193,7 @@ public class TinySet implements Iterable<TinySet> {
 
     /**
      * Gets the current PreparedStatement for any manual usage for operations outside the scope of TinySet or something TinySet has yet to implement.
+     *
      * @return This TinySet's instance of the PreparedStatement
      */
     public PreparedStatement getStatement() {
@@ -199,6 +202,7 @@ public class TinySet implements Iterable<TinySet> {
 
     /**
      * Gets the current ResultSet for any manual usage for operations outside the scope of TinySet or something TinySet has yet to implement.
+     *
      * @return This TinySet's instance of the ResultSet
      */
     public ResultSet getResultSet() {
@@ -244,6 +248,14 @@ public class TinySet implements Iterable<TinySet> {
     }
 
     /**
+     * @return A {@link List} populated with the {@link BigDecimal} values returned from the query
+     */
+    public List<BigDecimal> getBigDecList() {
+        query();
+        return stream().map(TinySet::getBigDec).collect(Collectors.toList());
+    }
+
+    /**
      * Sets the next {@link BigDecimal} in the parameterized query.
      *
      * @param decimal Next {@link BigDecimal} for the parameterized query
@@ -270,6 +282,14 @@ public class TinySet implements Iterable<TinySet> {
         } catch (SQLException e) {
             throw new TinyException(e);
         }
+    }
+
+    /**
+     * @return A {@link List} populated with the {@link Boolean} values returned from the query
+     */
+    public List<Boolean> getBooleanList() {
+        query();
+        return stream().map(TinySet::getBoolean).collect(Collectors.toList());
     }
 
     /**
@@ -302,6 +322,14 @@ public class TinySet implements Iterable<TinySet> {
     }
 
     /**
+     * @return A {@link List} populated with the {@link Byte} values returned from the query
+     */
+    public List<Byte> getByteList() {
+        query();
+        return stream().map(TinySet::getByte).collect(Collectors.toList());
+    }
+
+    /**
      * Sets the next byte in the parameterized query.
      *
      * @param b Next byte for the parameterized query
@@ -328,6 +356,22 @@ public class TinySet implements Iterable<TinySet> {
         } catch (SQLException e) {
             throw new TinyException(e);
         }
+    }
+
+    /**
+     * @return A {@link List} populated with the {@link Byte} array values returned from the query
+     */
+    public List<Byte[]> getBytesList() {
+        query();
+        List<byte[]> bytes = stream().map(TinySet::getBytes).collect(Collectors.toList());
+        // The byte array needs to be converted from a primitive array to boxed array.
+        return bytes.stream().map(b -> {
+            Byte[] B = new Byte[b.length];
+            for (int i = 0; i < b.length; i++) {
+                B[i] = b[i];
+            }
+            return B;
+        }).collect(Collectors.toList());
     }
 
     /**
@@ -362,6 +406,14 @@ public class TinySet implements Iterable<TinySet> {
     }
 
     /**
+     * @return A {@link List} populated with the {@link LocalDate} values returned from the query
+     */
+    public List<LocalDate> getDateList() {
+        query();
+        return stream().map(TinySet::getDate).collect(Collectors.toList());
+    }
+
+    /**
      * Sets the next {@link LocalDate} in the parameterized query.
      *
      * @param date Next {@link LocalDate} for the parameterized query
@@ -388,6 +440,14 @@ public class TinySet implements Iterable<TinySet> {
         } catch (SQLException e) {
             throw new TinyException(e);
         }
+    }
+
+    /**
+     * @return A {@link List} populated with the {@link Double} values returned from the query
+     */
+    public List<Double> getDoubleList() {
+        query();
+        return stream().map(TinySet::getDouble).collect(Collectors.toList());
     }
 
     /**
@@ -420,6 +480,14 @@ public class TinySet implements Iterable<TinySet> {
     }
 
     /**
+     * @return A {@link List} populated with the {@link Float} values returned from the query
+     */
+    public List<Float> getFloatList() {
+        query();
+        return stream().map(TinySet::getFloat).collect(Collectors.toList());
+    }
+
+    /**
      * Sets the next float in the parameterized query.
      *
      * @param f Next float for the parameterized query
@@ -446,6 +514,14 @@ public class TinySet implements Iterable<TinySet> {
         } catch (SQLException e) {
             throw new TinyException(e);
         }
+    }
+
+    /**
+     * @return A {@link List} populated with the {@link Integer} values returned from the query
+     */
+    public List<Integer> getIntList() {
+        query();
+        return stream().map(TinySet::getInt).collect(Collectors.toList());
     }
 
     /**
@@ -478,6 +554,14 @@ public class TinySet implements Iterable<TinySet> {
     }
 
     /**
+     * @return A {@link List} populated with the {@link Long} values returned from the query
+     */
+    public List<Long> getLongList() {
+        query();
+        return stream().map(TinySet::getLong).collect(Collectors.toList());
+    }
+
+    /**
      * Sets the next long in the parameterized query.
      *
      * @param l Next long for the parameterized query
@@ -504,6 +588,14 @@ public class TinySet implements Iterable<TinySet> {
         } catch (SQLException e) {
             throw new TinyException(e);
         }
+    }
+
+    /**
+     * @return A {@link List} populated with the {@link Short} values returned from the query
+     */
+    public List<Short> getShortList() {
+        query();
+        return stream().map(TinySet::getShort).collect(Collectors.toList());
     }
 
     /**
@@ -536,6 +628,14 @@ public class TinySet implements Iterable<TinySet> {
     }
 
     /**
+     * @return A {@link List} populated with the {@link String} values returned from the query
+     */
+    public List<String> getStringList() {
+        query();
+        return stream().map(TinySet::getString).collect(Collectors.toList());
+    }
+
+    /**
      * Sets the next {@link String} in the parameterized query.
      *
      * @param string Next {@link String} for the parameterized query
@@ -562,6 +662,14 @@ public class TinySet implements Iterable<TinySet> {
         } catch (SQLException e) {
             throw new TinyException(e);
         }
+    }
+
+    /**
+     * @return A {@link List} populated with the {@link Object} values returned from the query
+     */
+    public List<Object> getObjectList() {
+        query();
+        return stream().map(TinySet::getObject).collect(Collectors.toList());
     }
 
     /**
